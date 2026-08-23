@@ -1,0 +1,39 @@
+[project]
+name = "positive-search-mcp"
+version = "1.0.0"
+description = "Infrastructure for trading AI agents and their humans — save tokens while getting the highest-quality information about the current news background. Analysis of a large number of open sources, Polymarket, X and Truth. An advanced scoring formula, a system of narratives and a source-quality audit engine."
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [{ name = "Positive Search", email = "hi@positivesearch.app" }]
+keywords = ["mcp", "model-context-protocol", "sentiment", "bitcoin", "gold",
+            "oil", "trading", "news", "finance", "market-sentiment"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Developers",
+  "Intended Audience :: Financial and Insurance Industry",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Topic :: Office/Business :: Financial :: Investment",
+]
+# Зависимостей нет и не будет: см. шапку ps_mcp.py. Это не аскетизм, а свойство
+# дистрибуции — сервер ставят себе на машину, и каждая зависимость там работает
+# как причина не поставить.
+dependencies = []
+
+[project.urls]
+Homepage = "https://positivesearch.app/"
+Documentation = "https://positivesearch.app/llms.txt"
+Repository = "https://github.com/IliaKostroma/positive-search-mcp"
+"Agents Gate" = "https://positivesearch.app/.well-known/agents-gate.json"
+
+[project.scripts]
+positive-search-mcp = "ps_mcp:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+only-include = ["ps_mcp.py"]
+sources = ["."]
