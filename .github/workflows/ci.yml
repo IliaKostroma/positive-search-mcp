@@ -1,0 +1,58 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
+  schedule:
+    - cron: "17 6 * * 1"   # weekly: the server talks to a live API, so a green badge must mean "works today"
+
+jobs:
+  test:
+    name: selftest (py${{ matrix.python }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.9", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Version
+        run: python ps_mcp.py --version
+      - name: Selftest against the live API
+        run: python ps_mcp.py --selftest
+      - name: JSON-RPC handshake over stdio
+        run: |
+          python - <<'PY'
+          import json, subprocess, sys
+          init = {"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"ci","version":"1"}}}
+          listing = {"jsonrpc":"2.0","id":2,"method":"tools/list","params":{}}
+          notif = {"jsonrpc":"2.0","method":"notifications/initialized"}
+          stdin = "\n".join(json.dumps(m) for m in (init, notif, listing)) + "\n"
+          out = subprocess.run([sys.executable, "ps_mcp.py"], input=stdin, capture_output=True, text=True, timeout=60).stdout
+          msgs = [json.loads(l) for l in out.splitlines() if l.strip()]
+          by_id = {m.get("id"): m for m in msgs}
+          assert "serverInfo" in by_id[1]["result"], by_id[1]
+          tools = [t["name"] for t in by_id[2]["result"]["tools"]]
+          assert set(tools) >= {"get_sentiment","get_narratives","get_history","get_sources","compare_assets"}, tools
+          print("handshake OK, tools:", tools)
+          PY
+
+  build:
+    name: package builds
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install --quiet build
+      - run: python -m build
+      - name: Console script installs and runs
+        run: |
+          python -m pip install --quiet dist/*.whl
+          positive-search-mcp --version

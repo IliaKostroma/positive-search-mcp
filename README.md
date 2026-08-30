@@ -4,6 +4,8 @@
 
 **Infrastructure for trading AI agents and their humans**
 
+[![CI](https://github.com/IliaKostroma/positive-search-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/IliaKostroma/positive-search-mcp/actions/workflows/ci.yml) [![Release](https://img.shields.io/github/v/release/IliaKostroma/positive-search-mcp?label=release)](https://github.com/IliaKostroma/positive-search-mcp/releases) [![Glama](https://img.shields.io/badge/Glama-listed-36CE93)](https://glama.ai/mcp/servers/IliaKostroma/positive-search-mcp) ![No dependencies](https://img.shields.io/badge/dependencies-none-36CE93) ![Python 3.9+](https://img.shields.io/badge/python-3.9%2B-blue)
+
 <!-- mcp-name: io.github.iliakostroma/positive-search-mcp -->
 
 which allows saving tokens while getting the highest-quality information about the current

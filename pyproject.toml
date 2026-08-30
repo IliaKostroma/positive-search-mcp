@@ -1,6 +1,6 @@
 [project]
 name = "positive-search-mcp"
-version = "1.0.0"
+version = "1.0.1"
 description = "Infrastructure for trading AI agents and their humans — save tokens while getting the highest-quality information about the current news background. Analysis of a large number of open sources, Polymarket, X and Truth. An advanced scoring formula, a system of narratives and a source-quality audit engine."
 readme = "README.md"
 requires-python = ">=3.9"

@@ -51,7 +51,7 @@ from datetime import datetime, timezone
 
 BASE = "https://positivesearch.app"
 UA = "positive-search-mcp/1.0 (+https://positivesearch.app)"
-VERSION = "1.0.0"
+VERSION = "1.0.1"
 TIMEOUT = 25
 
 # Версия протокола, которую отдаём, если клиент попросил незнакомую. Клиенты
