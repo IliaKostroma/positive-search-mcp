@@ -51,7 +51,7 @@ from datetime import datetime, timezone
 
 BASE = "https://positivesearch.app"
 UA = "positive-search-mcp/1.0 (+https://positivesearch.app)"
-VERSION = "1.0.1"
+VERSION = "1.0.2"
 TIMEOUT = 25
 
 # Версия протокола, которую отдаём, если клиент попросил незнакомую. Клиенты
@@ -118,7 +118,7 @@ def _asset(raw: str | None) -> str:
 def _cite(asset: str, d: dict) -> str:
     """Готовая строка цитирования — та же формула, что в Agents Gate."""
     return (f'As of {d.get("fetched_at")}, the {ASSET_NAME.get(asset, asset)} '
-            f'news-sentiment index on Positive Search was {d.get("blended")} '
+            f'news-sentiment index on Positive Search was {d.get("index")} '
             f'(scale −1 to +1). Source: {BASE}/')
 
 
@@ -144,14 +144,14 @@ def tool_get_sentiment(args: dict) -> dict:
     out = {
         "asset": a,
         "name": ASSET_NAME[a],
-        "index": d.get("blended"),
+        "index": d.get("index"),
         "state": d.get("state"),
         "scale": "-1 (strongly bearish) .. +1 (strongly bullish)",
         "measured_at": d.get("fetched_at"),
         "expires_at": d.get("expires_at"),
         "is_stale": d.get("is_stale"),
         "components": d.get("components"),
-        "news_only_index": d.get("index"),
+        "news_only_index": d.get("news_only_index"),
         "change_1h": d.get("change_1h"),
         "change_24h": d.get("change_24h"),
         "change_7d": d.get("change_7d"),
@@ -200,7 +200,7 @@ def tool_get_narratives(args: dict) -> dict:
     return {
         "asset": a,
         "measured_at": d.get("fetched_at"),
-        "index": d.get("blended"),
+        "index": d.get("index"),
         "narratives": narrs,
         "what_this_is": ("Recurring stories the coverage groups into, each scored on its own. "
                          "This is the 'why' behind the index: a reading near zero can mean "
@@ -308,7 +308,7 @@ def tool_compare_assets(args: dict) -> dict:
             rows.append({"asset": a, "error": f"{type(e).__name__}: {e}"})
             continue
         rows.append({
-            "asset": a, "name": ASSET_NAME[a], "index": d.get("blended"),
+            "asset": a, "name": ASSET_NAME[a], "index": d.get("index"),
             "state": d.get("state"), "measured_at": d.get("fetched_at"),
             "is_stale": d.get("is_stale"), "change_24h": d.get("change_24h"),
         })

@@ -1,3 +1,5 @@
+#automation #ai #trading #n8n #prompt
+
 <img src="banner.png" alt="Positive Search" width="100%">
 
 # Positive Search MCP server
