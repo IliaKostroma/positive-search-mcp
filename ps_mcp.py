@@ -51,7 +51,7 @@ from datetime import datetime, timezone
 
 BASE = "https://positivesearch.app"
 UA = "positive-search-mcp/1.0 (+https://positivesearch.app)"
-VERSION = "1.0.2"
+VERSION = "1.0.3"
 TIMEOUT = 25
 
 # Версия протокола, которую отдаём, если клиент попросил незнакомую. Клиенты
@@ -174,6 +174,28 @@ def tool_get_sentiment(args: dict) -> dict:
                    "the weighted narratives are where most of the value is — reach for "
                    "get_sources only to verify a specific headline, and for get_history "
                    "only to tell a normal reading from an outlier.")
+    # Две другие ноги числа — X и Polymarket — тем же вызовом (Илья, 13.09):
+    # components{} говорит «сколько», эти карточки — «из чего». Посты режем до
+    # трёх: это иллюстрация тона, не лента.
+    x = d.get("x")
+    if isinstance(x, dict) and x.get("index") is not None:
+        out["x_sentiment"] = {
+            "index": x.get("index"), "activity": x.get("activity"),
+            "posts": x.get("posts"), "bull_pct": x.get("bull_pct"), "bear_pct": x.get("bear_pct"),
+            "window_hours": x.get("window_hours"), "measured_at": x.get("fetched_at"),
+            "is_stale": bool(x.get("stale")), "summary": x.get("summary"),
+            "top_posts": [{"handle": p.get("handle"), "text": p.get("text"), "score": p.get("score")}
+                          for p in (x.get("top_posts") or [])[:3]],
+            "what_this_is": "Tone of recent posts from a curated list of X accounts — one of the three inputs to index.",
+        }
+    pm = d.get("polymarket")
+    if isinstance(pm, dict) and (pm.get("index") is not None or pm.get("error") or pm.get("unavailable")):
+        out["polymarket"] = {
+            "index": pm.get("index"), "activity": pm.get("activity"), "measured_at": pm.get("fetched_at"),
+            "is_stale": bool(pm.get("stale")), "error": pm.get("error"), "unavailable": pm.get("unavailable"),
+            "what_this_is": ("Price-expectation skew from Polymarket price-ladder markets, weighted by real money — "
+                             "one of the three inputs to index. Not sentiment: where bets sit versus spot."),
+        }
     warn = _staleness(d)
     if warn:
         out["staleness_warning"] = warn
